@@ -454,6 +454,103 @@
   }
 </style>
 </head>
+  <!-- Toast (si no existe) -->
+<div id="toast" aria-hidden="true">¡Código copiado!</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Obtener o crear toast (la hoja de estilos en tu archivo ya define #toast y #toast.show)
+  let toast = document.getElementById('toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toast';
+    toast.textContent = '¡Código copiado!';
+    document.body.appendChild(toast);
+  }
+
+  let toastTimer = null;
+  function showToast(msg = '¡Código copiado!') {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 1500);
+  }
+
+  function maskCode(code) {
+    if (!code) return '';
+    const trimmed = code.trim();
+    if (trimmed.length <= 4) {
+      return trimmed[0] + '•'.repeat(Math.max(0, trimmed.length - 1));
+    }
+    const start = 1;
+    const end = 3;
+    const middleLen = Math.max(0, trimmed.length - start - end);
+    return trimmed.slice(0, start) + '•'.repeat(middleLen) + trimmed.slice(-end);
+  }
+
+  document.querySelectorAll('.code').forEach((el) => {
+    const full = el.textContent.trim();
+    el.dataset.full = full;
+    el.textContent = maskCode(full);
+
+    // Hacer clicable la fila completa si existe, sino el propio elemento
+    const clickable = el.closest('.code-row') || el;
+    clickable.style.cursor = 'pointer';
+    clickable.setAttribute('role', 'button');
+    clickable.setAttribute('aria-label', 'Copiar código');
+
+    let revealTimer = null;
+    clickable.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const textToCopy = el.dataset.full || full;
+
+      // Copiar al portapapeles (Clipboard API con fallback)
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(textToCopy);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = textToCopy;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+        }
+        showToast('¡Código copiado!');
+
+        // Mostrar el código completo brevemente y luego volver a enmascarar
+        clearTimeout(revealTimer);
+        el.textContent = textToCopy;
+        revealTimer = setTimeout(() => {
+          el.textContent = maskCode(textToCopy);
+        }, 1400);
+      } catch (err) {
+        // Intentar fallback y notificar fallo si corresponde
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = textToCopy;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+          showToast('¡Código copiado!');
+          clearTimeout(revealTimer);
+          el.textContent = textToCopy;
+          revealTimer = setTimeout(() => {
+            el.textContent = maskCode(textToCopy);
+          }, 1400);
+        } catch (err2) {
+          showToast('No se pudo copiar');
+        }
+      }
+    });
+  });
+});
+</script>
 <body>
 
 <div id="coupon-rain"></div>
