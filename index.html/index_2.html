@@ -365,6 +365,11 @@
     font-size:0.92rem;
     color: var(--ml-blue-bright);
   }
+  .code-row .code .masked{
+    color: rgba(255,255,255,0.28);
+    filter: blur(2.5px);
+    user-select:none;
+  }
   .code-row .copy-hint{
     font-size:0.68rem;
     color: var(--text-mid);
@@ -454,103 +459,6 @@
   }
 </style>
 </head>
-  <!-- Toast (si no existe) -->
-<div id="toast" aria-hidden="true">¡Código copiado!</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  // Obtener o crear toast (la hoja de estilos en tu archivo ya define #toast y #toast.show)
-  let toast = document.getElementById('toast');
-  if (!toast) {
-    toast = document.createElement('div');
-    toast.id = 'toast';
-    toast.textContent = '¡Código copiado!';
-    document.body.appendChild(toast);
-  }
-
-  let toastTimer = null;
-  function showToast(msg = '¡Código copiado!') {
-    toast.textContent = msg;
-    toast.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove('show'), 1500);
-  }
-
-  function maskCode(code) {
-    if (!code) return '';
-    const trimmed = code.trim();
-    if (trimmed.length <= 4) {
-      return trimmed[0] + '•'.repeat(Math.max(0, trimmed.length - 1));
-    }
-    const start = 1;
-    const end = 3;
-    const middleLen = Math.max(0, trimmed.length - start - end);
-    return trimmed.slice(0, start) + '•'.repeat(middleLen) + trimmed.slice(-end);
-  }
-
-  document.querySelectorAll('.code').forEach((el) => {
-    const full = el.textContent.trim();
-    el.dataset.full = full;
-    el.textContent = maskCode(full);
-
-    // Hacer clicable la fila completa si existe, sino el propio elemento
-    const clickable = el.closest('.code-row') || el;
-    clickable.style.cursor = 'pointer';
-    clickable.setAttribute('role', 'button');
-    clickable.setAttribute('aria-label', 'Copiar código');
-
-    let revealTimer = null;
-    clickable.addEventListener('click', async (e) => {
-      e.preventDefault();
-      const textToCopy = el.dataset.full || full;
-
-      // Copiar al portapapeles (Clipboard API con fallback)
-      try {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          await navigator.clipboard.writeText(textToCopy);
-        } else {
-          const ta = document.createElement('textarea');
-          ta.value = textToCopy;
-          ta.style.position = 'fixed';
-          ta.style.left = '-9999px';
-          document.body.appendChild(ta);
-          ta.select();
-          document.execCommand('copy');
-          ta.remove();
-        }
-        showToast('¡Código copiado!');
-
-        // Mostrar el código completo brevemente y luego volver a enmascarar
-        clearTimeout(revealTimer);
-        el.textContent = textToCopy;
-        revealTimer = setTimeout(() => {
-          el.textContent = maskCode(textToCopy);
-        }, 1400);
-      } catch (err) {
-        // Intentar fallback y notificar fallo si corresponde
-        try {
-          const ta = document.createElement('textarea');
-          ta.value = textToCopy;
-          ta.style.position = 'fixed';
-          ta.style.left = '-9999px';
-          document.body.appendChild(ta);
-          ta.select();
-          document.execCommand('copy');
-          ta.remove();
-          showToast('¡Código copiado!');
-          clearTimeout(revealTimer);
-          el.textContent = textToCopy;
-          revealTimer = setTimeout(() => {
-            el.textContent = maskCode(textToCopy);
-          }, 1400);
-        } catch (err2) {
-          showToast('No se pudo copiar');
-        }
-      }
-    });
-  });
-});
-</script>
 <body>
 
 <div id="coupon-rain"></div>
@@ -608,18 +516,18 @@ document.addEventListener('DOMContentLoaded', () => {
 const AFFILIATE_LINK = "https://meli.la/1BtLeKk";
 
 const COUPONS = [
-  { title:"GENERAL",        sub:"COMPRA MIN 2500",     code:"QUINCENA",  discount:"15% OFF", category:"Electrónica", hours:6,  minutes:12 },
-  { title:"GENERAL",      sub:"COMPRA MIN. 1500",        code:"COMIENZA12",   discount:"15% OFF", category:"Celulares",   hours:3,  minutes:45 },
-  { title:"GENERAL",               sub:"Electrodomésticos top",    code:"ML35HOGAR", discount:"35% OFF", category:"Hogar",       hours:9,  minutes:0  },
-  { title:"GENERAL",            sub:"COMPRA MIN. 700",           code:"YALISTOS",  discount:"15% OFF", category:"Moda",        hours:12, minutes:30 },
-  { title:"INACTIVO",           sub:"Equipo para entrenar",     code:"ML25DEP",   discount:"25% OFF", category:"Deportes",    hours:5,  minutes:20 },
-  { title:"INACTIVO",   sub:"Skincare y maquillaje",    code:"ML20BELL",  discount:"20% OFF", category:"Belleza",     hours:7,  minutes:5  },
-  { title:"INACTIVO",                  sub:"Laptops y periféricos",    code:"ML45PC",    discount:"45% OFF", category:"Electrónica", hours:2,  minutes:50 },
-  { title:"INACTIVO",             sub:"Todo para los peques",     code:"ML30KIDS",  discount:"30% OFF", category:"Hogar",       hours:14, minutes:15 },
-  { title:"INACTIVO",                 sub:"Para el hogar y taller",   code:"ML28TOOL",  discount:"28% OFF", category:"Hogar",       hours:8,  minutes:40 },
-  { title:"INACTIVO",         sub:"Estilo todos los días",    code:"ML33REL",   discount:"33% OFF", category:"Moda",        hours:4,  minutes:10 },
-  { title:"INACTIVO",                       sub:"Consolas y videojuegos",   code:"ML50GAME",  discount:"50% OFF", category:"Electrónica", hours:6,  minutes:55 },
-  { title:"INACTIVO",                     sub:"Alimento y accesorios",    code:"ML22PET",   discount:"22% OFF", category:"Hogar",       hours:11, minutes:25 },
+  { title:"Electrónica en oferta",        sub:"Audio, gadgets y más",     code:"ML50TECH",  discount:"50% OFF", category:"Electrónica", hours:6,  minutes:12 },
+  { title:"Celulares seleccionados",      sub:"Gama media y alta",        code:"ML40CEL",   discount:"40% OFF", category:"Celulares",   hours:3,  minutes:45 },
+  { title:"Hogar y cocina",               sub:"Electrodomésticos top",    code:"ML35HOGAR", discount:"35% OFF", category:"Hogar",       hours:9,  minutes:0  },
+  { title:"Moda de temporada",            sub:"Ropa y calzado",           code:"ML30MODA",  discount:"30% OFF", category:"Moda",        hours:12, minutes:30 },
+  { title:"Deportes y fitness",           sub:"Equipo para entrenar",     code:"ML25DEP",   discount:"25% OFF", category:"Deportes",    hours:5,  minutes:20 },
+  { title:"Belleza y cuidado personal",   sub:"Skincare y maquillaje",    code:"ML20BELL",  discount:"20% OFF", category:"Belleza",     hours:7,  minutes:5  },
+  { title:"Computación",                  sub:"Laptops y periféricos",    code:"ML45PC",    discount:"45% OFF", category:"Electrónica", hours:2,  minutes:50 },
+  { title:"Juguetes y niños",             sub:"Todo para los peques",     code:"ML30KIDS",  discount:"30% OFF", category:"Hogar",       hours:14, minutes:15 },
+  { title:"Herramientas",                 sub:"Para el hogar y taller",   code:"ML28TOOL",  discount:"28% OFF", category:"Hogar",       hours:8,  minutes:40 },
+  { title:"Relojes y accesorios",         sub:"Estilo todos los días",    code:"ML33REL",   discount:"33% OFF", category:"Moda",        hours:4,  minutes:10 },
+  { title:"Gaming",                       sub:"Consolas y videojuegos",   code:"ML50GAME",  discount:"50% OFF", category:"Electrónica", hours:6,  minutes:55 },
+  { title:"Mascotas",                     sub:"Alimento y accesorios",    code:"ML22PET",   discount:"22% OFF", category:"Hogar",       hours:11, minutes:25 },
 ];
 
 const grid = document.getElementById("grid");
@@ -643,6 +551,16 @@ function buildCategories(){
       renderGrid();
     });
   });
+}
+
+function maskCode(code){
+  // Muestra solo una parte del código y tapa el resto con puntos difuminados,
+  // pero el copiado siempre usa el código completo (c.code), nunca esta versión.
+  const visibleChars = Math.max(2, Math.ceil(code.length * 0.4));
+  const visible = code.slice(0, visibleChars);
+  const hiddenCount = code.length - visibleChars;
+  const hidden = "•".repeat(Math.max(2, hiddenCount));
+  return `${visible}<span class="masked">${hidden}</span>`;
 }
 
 function timeLeftLabel(totalSeconds){
@@ -681,8 +599,8 @@ function renderGrid(){
         <div class="coupon-title">${c.title}</div>
         <div class="coupon-sub">${c.sub}</div>
         <div class="code-row">
-          <span class="code">${c.code}</span>
-          <span class="copy-hint">⧉ Copiar</span>
+          <span class="code">${maskCode(c.code)}</span>
+          <span class="copy-hint">⧉ Copiar código completo</span>
         </div>
         <div class="coupon-bottom">
           <span class="timer"><span class="dot"></span><span class="timer-text">${timeLeftLabel(secondsLeft)}</span></span>
@@ -769,3 +687,4 @@ buildRain();
 </script>
 </body>
 </html>
+
