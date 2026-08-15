@@ -1,6 +1,6 @@
 [
   { "title": "CUPON ACTIVO",      "sub": "Audio, gadgets y más",   "code": "COMIENZA12",  "discount": "15% OFF", "category": "Electrónica", "hours": 6,  "minutes": 12 },
-  { "title": "Celulares seleccionados",    "sub": "Gama media y alta",      "code": "ML40CEL",   "discount": "40% OFF", "category": "Celulares",   "hours": 3,  "minutes": 45 },
+  { "title": "cupon activo",    "sub": "Gama media y alta",      "code": "YALISTOS",   "discount": "40% OFF", "category": "Celulares",   "hours": 3,  "minutes": 45 },
   { "title": "Hogar y cocina",             "sub": "Electrodomésticos top",  "code": "ML35HOGAR", "discount": "35% OFF", "category": "Hogar",       "hours": 9,  "minutes": 0  },
   { "title": "Moda de temporada",          "sub": "Ropa y calzado",         "code": "ML30MODA",  "discount": "30% OFF", "category": "Moda",        "hours": 12, "minutes": 30 },
   { "title": "Deportes y fitness",         "sub": "Equipo para entrenar",   "code": "ML25DEP",   "discount": "25% OFF", "category": "Deportes",    "hours": 5,  "minutes": 20 },
