@@ -1,0 +1,14 @@
+[
+  { "title": "Electrónica en oferta",      "sub": "Audio, gadgets y más",   "code": "ML50TECH",  "discount": "50% OFF", "category": "Electrónica", "hours": 6,  "minutes": 12 },
+  { "title": "Celulares seleccionados",    "sub": "Gama media y alta",      "code": "ML40CEL",   "discount": "40% OFF", "category": "Celulares",   "hours": 3,  "minutes": 45 },
+  { "title": "Hogar y cocina",             "sub": "Electrodomésticos top",  "code": "ML35HOGAR", "discount": "35% OFF", "category": "Hogar",       "hours": 9,  "minutes": 0  },
+  { "title": "Moda de temporada",          "sub": "Ropa y calzado",         "code": "ML30MODA",  "discount": "30% OFF", "category": "Moda",        "hours": 12, "minutes": 30 },
+  { "title": "Deportes y fitness",         "sub": "Equipo para entrenar",   "code": "ML25DEP",   "discount": "25% OFF", "category": "Deportes",    "hours": 5,  "minutes": 20 },
+  { "title": "Belleza y cuidado personal", "sub": "Skincare y maquillaje",  "code": "ML20BELL",  "discount": "20% OFF", "category": "Belleza",     "hours": 7,  "minutes": 5  },
+  { "title": "Computación",                "sub": "Laptops y periféricos",  "code": "ML45PC",    "discount": "45% OFF", "category": "Electrónica", "hours": 2,  "minutes": 50 },
+  { "title": "Juguetes y niños",           "sub": "Todo para los peques",   "code": "ML30KIDS",  "discount": "30% OFF", "category": "Hogar",       "hours": 14, "minutes": 15 },
+  { "title": "Herramientas",               "sub": "Para el hogar y taller", "code": "ML28TOOL",  "discount": "28% OFF", "category": "Hogar",       "hours": 8,  "minutes": 40 },
+  { "title": "Relojes y accesorios",       "sub": "Estilo todos los días",  "code": "ML33REL",   "discount": "33% OFF", "category": "Moda",        "hours": 4,  "minutes": 10 },
+  { "title": "Gaming",                     "sub": "Consolas y videojuegos", "code": "ML50GAME",  "discount": "50% OFF", "category": "Electrónica", "hours": 6,  "minutes": 55 },
+  { "title": "Mascotas",                   "sub": "Alimento y accesorios",  "code": "ML22PET",   "discount": "22% OFF", "category": "Hogar",       "hours": 11, "minutes": 25 }
+]
