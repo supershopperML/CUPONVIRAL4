@@ -588,10 +588,10 @@ function renderGrid(){
     return;
   }
 
-  grid.innerHTML = filtered.map((c, i)=>{
-    const secondsLeft = (c.hours*3600 + c.minutes*60);
+  grid.innerHTML = filtered.map((c)=>{
+    const idx = COUPONS.indexOf(c);
     return `
-      <div class="coupon" data-index="${COUPONS.indexOf(c)}" data-seconds="${secondsLeft}">
+      <div class="coupon" data-index="${idx}">
         <div class="coupon-top">
           <span class="cat-tag">${c.category}</span>
           <span class="discount">${c.discount}</span>
@@ -603,7 +603,7 @@ function renderGrid(){
           <span class="copy-hint">⧉ Copiar código completo</span>
         </div>
         <div class="coupon-bottom">
-          <span class="timer"><span class="dot"></span><span class="timer-text">${timeLeftLabel(secondsLeft)}</span></span>
+          <span class="timer"><span class="dot"></span><span class="timer-text">${timeLeftLabel(c.secondsLeft)}</span></span>
           <button class="go-btn">Usar cupón →</button>
         </div>
       </div>
@@ -613,22 +613,45 @@ function renderGrid(){
   grid.querySelectorAll(".coupon").forEach(card=>{
     card.addEventListener("click", ()=> activateCoupon(card));
   });
-
-  startTimers();
 }
 
 let timerHandle = null;
 function startTimers(){
-  if(timerHandle) clearInterval(timerHandle);
+  // El tiempo restante vive en cada objeto de COUPONS (no en el DOM),
+  // así que buscar o cambiar de categoría ya no reinicia el conteo.
+  if(timerHandle) return;
   timerHandle = setInterval(()=>{
-    document.querySelectorAll(".coupon").forEach(card=>{
-      let secs = parseInt(card.dataset.seconds, 10) - 1;
-      if(secs <= 0) secs = 12*3600; // el cupón se "renueva" al llegar a 0
-      card.dataset.seconds = secs;
-      const label = card.querySelector(".timer-text");
-      if(label) label.textContent = timeLeftLabel(secs);
+    COUPONS.forEach((c, idx)=>{
+      c.secondsLeft -= 1;
+      if(c.secondsLeft <= 0) c.secondsLeft = c.hours*3600 + c.minutes*60; // el cupón se "renueva" al llegar a 0
+      const label = grid.querySelector(`.coupon[data-index="${idx}"] .timer-text`);
+      if(label) label.textContent = timeLeftLabel(c.secondsLeft);
     });
   }, 1000);
+}
+
+function copyText(text){
+  // Intenta con la Clipboard API moderna; si no está disponible o falla
+  // (por ejemplo al abrir el archivo como file:// en vez de https/localhost),
+  // usa un textarea temporal + execCommand como respaldo.
+  if(navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext){
+    return navigator.clipboard.writeText(text).catch(()=> legacyCopy(text));
+  }
+  return Promise.resolve(legacyCopy(text));
+}
+
+function legacyCopy(text){
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  let ok = false;
+  try{ ok = document.execCommand("copy"); }catch(e){ ok = false; }
+  document.body.removeChild(ta);
+  return ok;
 }
 
 function activateCoupon(card){
@@ -636,16 +659,13 @@ function activateCoupon(card){
   const coupon = COUPONS[idx];
   const link = coupon.url || AFFILIATE_LINK;
 
-  const finish = () => {
-    showToast(`Código ${coupon.code} copiado — abriendo Mercado Libre…`);
+  copyText(coupon.code).then((copied)=>{
+    const success = copied !== false; // la Clipboard API resuelve sin valor cuando sí copia
+    showToast(success
+      ? `Código ${coupon.code} copiado — abriendo Mercado Libre…`
+      : `Abriendo Mercado Libre… copia el código ${coupon.code} manualmente`);
     window.open(link, "_blank", "noopener");
-  };
-
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(coupon.code).then(finish).catch(finish);
-  } else {
-    finish();
-  }
+  });
 }
 
 function showToast(msg){
@@ -680,9 +700,11 @@ function buildRain(){
 }
 
 /* ---------- Init ---------- */
+COUPONS.forEach(c => { c.secondsLeft = c.hours*3600 + c.minutes*60; });
 statTotal.textContent = COUPONS.length;
 buildCategories();
 renderGrid();
+startTimers();
 buildRain();
 </script>
 </body>
